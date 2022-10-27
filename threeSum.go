@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "strings"
+import "sort"
 
 func bubbleSort(nums []int) []int {
     for i:=0; i<len(nums)-1; i++ {
@@ -187,9 +188,46 @@ func elementTimes(arr []int, times int) []int {
     return ret
 }
 
+func threeSumPro(nums []int) [][]int {
+    var ret [][]int
+    sort.Ints(nums)
+
+    for i:=0; i<len(nums)-2; i++ {
+        if nums[i] > 0 {
+            break
+        }
+        if i>0 && nums[i] == nums[i-1] {
+            continue
+        }
+        left  := i+1
+        right := len(nums)-1
+        for left < right {
+            if nums[i] + nums[left] + nums[right] == 0 {
+                ret = append(ret, []int{nums[i], nums[left], nums[right]})
+                for left<right && nums[left]==nums[left+1] {
+                    left++
+                }
+                for left<right && nums[right]==nums[right-1] {
+                    right--
+                }
+                left++
+                right--
+            }else if nums[i] + nums[left] + nums[right] > 0 {
+                right--
+            }else if nums[i] + nums[left] + nums[right] < 0 {
+                left++
+            }
+        }
+    }
+
+    return ret
+}
+
 func main() {
     fmt.Println(threeSum([]int{-1, 0, 1, 2, -1, -4}))
     fmt.Println(threeSumNew([]int{-1, 0, 1, 2, -1, -4}))
+    fmt.Println(threeSumPro([]int{-1, 0, 1, 2, -1, -4}))
     fmt.Println(threeSum([]int{0, 0, 0}))
     fmt.Println(threeSumNew([]int{0, 0, 0}))
+    fmt.Println(threeSumPro([]int{0, 0, 0}))
 }
