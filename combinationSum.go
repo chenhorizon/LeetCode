@@ -1,68 +1,92 @@
-// Find all valid combinations of k numbers that sum up to n such that the following conditions are true:
+// Given an array of distinct integers candidates and a target integer target, 
+// return a list of all unique combinations of candidates where the chosen numbers sum to target. 
+// You may return the combinations in any order.
 //
-// Only numbers 1 through 9 are used.
-// Each number is used at most once.
-// Return a list of all possible valid combinations. The list must not contain the same combination twice, and the combinations may be returned in any order.
+// The same number may be chosen from candidates an unlimited number of times. 
+// Two combinations are unique if the frequency of at least one of the chosen numbers is different.
 //
+// The test cases are generated such that the number of unique combinations that sum up to target is less than 150 combinations 
+// for the given input.
 //  
 //
 // Example 1:
 //
-// Input: k = 3, n = 7
-// Output: [[1,2,4]]
+// Input: candidates = [2,3,6,7], target = 7
+// Output: [[2,2,3],[7]]
 // Explanation:
-// 1 + 2 + 4 = 7
-// There are no other valid combinations.
+// 2 and 3 are candidates, and 2 + 2 + 3 = 7. Note that 2 can be used multiple times.
+// 7 is a candidate, and 7 = 7.
+// These are the only two combinations.
 // Example 2:
 //
-// Input: k = 3, n = 9
-// Output: [[1,2,6],[1,3,5],[2,3,4]]
-// Explanation:
-// 1 + 2 + 6 = 9
-// 1 + 3 + 5 = 9
-// 2 + 3 + 4 = 9
-// There are no other valid combinations.
+// Input: candidates = [2,3,5], target = 8
+// Output: [[2,2,2,2],[2,3,3],[3,5]]
 // Example 3:
 //
-// Input: k = 4, n = 1
+// Input: candidates = [2], target = 1
 // Output: []
-// Explanation: There are no valid combinations.
-// Using 4 different numbers in the range [1,9], the smallest sum we can get is 1+2+3+4 = 10 and since 10 > 1, there are no valid combination.
 //  
 //
 // Constraints:
 //
-// 2 <= k <= 9
-// 1 <= n <= 60
+// 1 <= candidates.length <= 30
+// 2 <= candidates[i] <= 40
+// All elements of candidates are distinct.
+// 1 <= target <= 40
 
 package main
 
 import "fmt"
+import "sort"
 
-func combinationSum3(k int, n int) [][]int {
+func combinationSum(candidates []int, target int) [][]int {
     ret := [][]int{}
-    res := []int{}
+    fRet := [][]int{}
 
-    ret = _combination(k, n, []int{1, 2, 3, 4, 5, 6, 7, 8, 9}, res, ret)
-    return ret
-}
+    sort.Ints(candidates)
+    times := target / candidates[0] + 1
 
-func _combination(k int, n int, nums []int, res []int, ret [][]int) [][]int {
-    if k == 1 {
-        for _, v := range(nums) {
-            if v == n {
-                res = append(res, v)
-                ret = append(ret, res)
-                return ret
+    for times > 0 {
+        lenRet := len(ret)
+        for i:=0; i<len(candidates); i++ {
+            if lenRet == 0 {
+                ret = append(ret, []int{candidates[i]})
+                if candidates[i] == target {
+                    fRet = append(fRet, []int{candidates[i]})
+                    fmt.Println("zzz:", fRet)
+                }
+                continue
+            }
+            for j:=0; j<lenRet; j++ {
+                if ret[j][len(ret[j])-1] > candidates[i] {
+                    continue
+                }
+                ret = append(ret, append(ret[j], candidates[i]))
+                sum := 0
+                for k:=0; k<len(ret[len(ret)-1]); k++ {
+                    sum = sum + ret[len(ret)-1][k]
+                }
+                if sum == target {
+                    fmt.Println(ret[len(ret)-1])
+                    cpRetItem := make([]int,len(ret[len(ret)-1]))
+                    copy(cpRetItem, ret[len(ret)-1][:])
+                    fRet = append(fRet, cpRetItem)
+                }
             }
         }
+
+        ret = ret[lenRet:]
+        times--
     }
 
-    for i:=0; i<len(nums); i++ {
-        _combination(k-1, n-nums[i], nums[i:], res, ret)
-    }
+    fmt.Println("eee:", fRet)
+    return fRet
 }
 
 func main() {
-    fmt.Println(combinationSum3(1, 4))
+    fmt.Println("candidates = [2,3,5], target = 8:", combinationSum([]int{2, 3, 5}, 8))
+    fmt.Println("candidates = [2,3,6], target = 9:", combinationSum([]int{2, 3, 6}, 9))
+    fmt.Println("candidates = [2,3,6,7], target = 7:", combinationSum([]int{2, 3, 6, 7}, 7))
+    fmt.Println("candidates = [7,3,2], target = 18:", combinationSum([]int{7, 3, 2}, 18))
+    fmt.Println("candidates = [2,3,7], target = 18:", combinationSum([]int{2, 3, 7}, 18))
 }
