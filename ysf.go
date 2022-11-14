@@ -27,4 +27,5 @@ func ysf(arr []int, num int) []int {
 
 func main() {
     fmt.Println(ysf([]int{1, 2, 3, 4, 5, 6, 7, 8, 9}, 6))
+    fmt.Println(ysf([]int{1, 2, 3, 4, 5}, 2))
 }
